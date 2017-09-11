@@ -1,34 +1,10 @@
 <?php
 
+namespace Common\Controller;
 include_once './functions.php';
 
-class PeopleManagerException
-{
-	public $Message;
-	public $Code;
-	public $Data;
 
-	function __construct($mess,$code,$data)
-	{
-		$this->Message = $mess;
-		$this->Code  = $code;
-
-		$pdo = new Gibbon\sqlConnection();
-		$DB = $pdo->getConnection();
-		switch(getSettingByScope($DB, 'System', 'installType', true))
-		{
-			case "Testing":
-				$this->Data = "You are in testing mode.";
-				break;
-
-			default:
-				$this->Data = "No extra data because the system is not in a mode supported for that. Your type is set to [" . getSettingByScope($DB, 'System', 'installType', true) . "]";
-				break;
-		}
-	}
-}
-
-class PeopleManager
+class PeopleController
 {
 	private $DB;
 
