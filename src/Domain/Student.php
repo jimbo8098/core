@@ -1,5 +1,5 @@
 <?php
-
+namespace Common\Domain\Student
 class Student extends Person
 {
 	public $EnrolmentID;

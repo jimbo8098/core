@@ -1,5 +1,6 @@
 <?php
 
+namespace Common\Domain\Person
 include_once './functions.php';
 class Person
 {
