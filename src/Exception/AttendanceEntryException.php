@@ -1,6 +1,6 @@
 <?php
 
-namespace Common\Attendance;
+namespace Common\Exception;
 class AttendanceEntryException extends \Exception
 {
 	public $Message;

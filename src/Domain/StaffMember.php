@@ -1,6 +1,6 @@
 <?php
 
-namespace Common\Domain\StaffMember
+namespace Common\Domain;
 include_once 'Person.php';
 class StaffMember extends Person
 {
