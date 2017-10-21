@@ -8,8 +8,6 @@ $loader->register();
 
 $asController = new Gibbon\Modules\Staff\Controllers\AbsenceStaffController($connection2);
 $postedData = json_decode(file_get_contents('php://input'));
-if($postedData != null)
-{
 	$postedAbsence = new Gibbon\Modules\Staff\Domains\AbsenceStaff($postedData);	
 	try
 	{
@@ -17,12 +15,7 @@ if($postedData != null)
 	}
 	catch(\Exception $e)
 	{
-		throw $e;
+		print json_encode($e);
 	}
-}
-else
-{
-	return false;
-}
 
 ?>
