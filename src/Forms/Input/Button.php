@@ -29,6 +29,7 @@ class Button extends Input
 {
     private $onclick;
 
+<<<<<<< HEAD
     public function __construct($name, $onClick)
     {
         $this->setName($name);
@@ -48,4 +49,38 @@ class Button extends Input
         $output = '<input type="button" '.$this->getAttributeString().'>';
         return $output;
     }
+=======
+	protected $name;
+
+	public function __construct($name, $text, $onClick)
+	{
+		$this->setAttribute('value', $text);
+		$this->onClick($onClick);
+		$this->setName($name);
+	}
+
+	public function onClick($value)
+	{
+		$this->setAttribute('onClick', $value);
+		return $this;
+	}
+
+	protected function getElement()
+	{
+		$output = '<input type="button" '.$this->getAttributeString().'>';
+
+		return $output;
+	}
+
+	public function getName()
+	{
+		return $this->name;
+	}
+
+	public function setName($name = '')
+	{
+		$this->name = $name;
+		return $this->name;
+	}
+>>>>>>> f4806c3fa364d9758c3a5e3b842e99e00e434b14
 }

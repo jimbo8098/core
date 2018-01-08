@@ -82,9 +82,15 @@ class FormFactory implements FormFactoryInterface
         return new Layout\Element($content);
     }
 
+<<<<<<< HEAD
     public function createWebLink($content = '')
     {
     	return new Layout\WebLink($content);
+=======
+    public function createCollection($content)
+    {
+    	return new Layout\ElementCollection($content);
+>>>>>>> f4806c3fa364d9758c3a5e3b842e99e00e434b14
     }
 
     /* BASIC INPUT --------------------------- */
@@ -119,6 +125,15 @@ class FormFactory implements FormFactoryInterface
         return (new Input\TextField($name))->addValidation('Validate.Email');
     }
 
+<<<<<<< HEAD
+=======
+    //Allows elements to be embedded
+    public function createWebLink($name,$url)
+    {
+    	return new Input\WebLink($name,$url);
+    }
+
+>>>>>>> f4806c3fa364d9758c3a5e3b842e99e00e434b14
     //A URL web link
     public function createURL($name)
     {
@@ -180,6 +195,7 @@ class FormFactory implements FormFactoryInterface
         return new Input\MultiSelect($this, $name);
     }
 
+<<<<<<< HEAD
     public function createButton($label = 'Button', $onClick = '', $id = null)
     {
         $button = new Input\Button($label, $onClick);
@@ -188,6 +204,11 @@ class FormFactory implements FormFactoryInterface
         }
         
         return $button;
+=======
+    public function createButton($name, $label = 'Button', $onClick = '')
+    {
+        return new Input\Button($name, $label, $onClick);
+>>>>>>> f4806c3fa364d9758c3a5e3b842e99e00e434b14
     }
 
     public function createCustomBlocks($name, OutputableInterface $block, \Gibbon\Session $session)
