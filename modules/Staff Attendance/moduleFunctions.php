@@ -17,4 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+$modDir = "./modules/" . $_SESSION[$guid]["module"];
+include $modDir . '/common/DatabaseHelper.php';
+
+include $modDir . '/controllers/StaffAttendanceController.php';
+
+include $modDir . '/domains/StaffAttendanceEntry.php';
+
 ?>

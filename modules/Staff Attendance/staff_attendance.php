@@ -59,6 +59,10 @@ else {
   $form->addRow()->addSubmit();
 
   echo $form->getOutput();
+  echo "<br/>";
+  
+  $saCtrl = new StaffAttendanceController();
+  var_dump($saCtrl->GetAllAttendance());
 
 }	
 ?>
