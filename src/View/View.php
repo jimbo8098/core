@@ -77,17 +77,18 @@ class View implements \ArrayAccess
         }
 
         extract($data);
-
+        
         try {
             ob_start();
             $included = include $filepath;
             $output = ob_get_clean() . (is_string($included)? $included : '');
         } catch (\Exception $e) {
+            
             $output = '';
             ob_end_clean();
             throw $e;
         }
-
+        
         return $output;
     }
 
