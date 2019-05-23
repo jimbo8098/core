@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Gibbon\Module\InfoGrid;
+namespace Gibbon\Module\InfoGrid\Domain;
 
 use Gibbon\Domain\Traits\TableAware;
 use Gibbon\Domain\QueryCriteria;
@@ -40,7 +40,7 @@ class InfoGridGateway extends QueryableGateway
     private function getDefaultTableQuery(){
         return $this
             ->newQuery()
-            ->from($this->getTableName())
+            ->from($this->getTableName(). ' as i')
             ->cols([
                 'i.infoGridEntryID as infoGridEntryID',
                 'i.title as title',
@@ -58,7 +58,7 @@ class InfoGridGateway extends QueryableGateway
 
     public function queryInfoGrid(QueryCriteria $criteria)
     {
-        $query = getDefaultTableQuery();
+        $query = $this->getDefaultTableQuery();
 
         $criteria->addFilterRules([
             'isStaff' => function($query,$needle = true)
@@ -82,11 +82,13 @@ class InfoGridGateway extends QueryableGateway
                     ->bindValue('creatorID',$needle);
             }
         ]);
+
+        return $this->runQuery($query,$criteria);
     }
 
     public function queryInfoGridCreator(QueryCriteria $criteria)
     {
-        $query = getDefaultTableQuery()
+        $query = $this->getDefaultTableQuery()
             ->innerJoin('gibbonPerson p on p.gibbonPersonID = i.gibbonPersonIDCreator');
         
         $query->cols(
@@ -120,6 +122,7 @@ class InfoGridGateway extends QueryableGateway
             },
             'creatorName'
         ]);
+        return $this->runQuery($query,$criteria);
     }
     
     

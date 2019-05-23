@@ -35,6 +35,6 @@ if (isActionAccessible($guid, $connection2, '/modules/Info Grid/infoGrid_view.ph
         echo '<h2>';
         echo __('Info Grid');
         echo '</h2>';
-        echo getInfoGrid($connection2, $guid);
+        echo getInfoGrid($container,$connection2, $guid);
     }
 }
