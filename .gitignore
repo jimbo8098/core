@@ -2,6 +2,7 @@
 /config.php
 /index_custom.php
 /index_customSidebar.php
+/web.config
 
 # Uploads Folder
 uploads/*
