@@ -55,3 +55,6 @@
 # black list some files and folders
 # in the module folders
 **/.DS_Store
+
+!/House Points/
+!/House Points/**

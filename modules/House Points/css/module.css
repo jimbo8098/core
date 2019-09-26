@@ -1,0 +1,9 @@
+.enabledButton {
+    background-color: black;
+    color: white;
+}
+
+.disabledButton {
+    background-color: #cccccc;
+    color: green;
+}
