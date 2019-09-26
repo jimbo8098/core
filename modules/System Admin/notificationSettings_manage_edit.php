@@ -61,11 +61,11 @@ if (isActionAccessible($guid, $connection2, '/modules/System Admin/notificationS
 
             $row = $form->addRow();
                 $row->addLabel('event', __('Event'));
-                $row->addTextField('event')->setValue($event['moduleName'].': '.$event['event'])->readOnly();
+                $row->addTextField('event')->setValue(__($event['moduleName']).': '.__($event['event']))->readOnly();
 
             $row = $form->addRow();
                 $row->addLabel('permission', __('Permission Required'));
-                $row->addTextField('permission')->setValue($event['actionName'])->readOnly();
+                $row->addTextField('permission')->setValue(__($event['actionName']))->readOnly();
 
             $row = $form->addRow();
                 $row->addLabel('active', __('Active'));
@@ -132,7 +132,7 @@ if (isActionAccessible($guid, $connection2, '/modules/System Admin/notificationS
                     } else {
                         switch($listener['scopeType']) {
                             case 'gibbonPersonIDStudent':   $data = array('gibbonPersonID' => $listener['scopeID']);
-                                                            $sql = "SELECT 'Student' as scopeTypeName, CONCAT(surname, ' ', preferredName) as scopeIDName FROM gibbonperson WHERE gibbonPersonID=:gibbonPersonID";
+                                                            $sql = "SELECT 'Student' as scopeTypeName, CONCAT(surname, ' ', preferredName) as scopeIDName FROM gibbonPerson WHERE gibbonPersonID=:gibbonPersonID";
                                                             break;
 
                             case 'gibbonYearGroupID':       $data = array('gibbonYearGroupID' => $listener['scopeID']);

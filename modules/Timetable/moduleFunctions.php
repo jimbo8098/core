@@ -430,7 +430,9 @@ function renderTT($guid, $connection2, $gibbonPersonID, $gibbonTTID, $title = ''
             $output .= '</td>';
             $output .= "<td style='vertical-align: top; text-align: right'>";
             $output .= "<form method='post' action='".$_SESSION[$guid]['absoluteURL']."/index.php?q=$q&gibbonTTID=".$row['gibbonTTID']."$params'>";
-            $output .= "<input name='ttDate' id='ttDate' maxlength=10 value='".date($_SESSION[$guid]['i18n']['dateFormatPHP'], $startDayStamp)."' type='text' style='height: 22px; width:100px; margin-right: 0px; float: none'> ";
+            $output .= '<span class="relative">';
+            $output .= "<input name='ttDate' id='ttDate' maxlength=10 value='".date($_SESSION[$guid]['i18n']['dateFormatPHP'], $startDayStamp)."' type='text' style='height: 28px; width:120px; margin-right: 0px; float: none'> ";
+            $output .= '</span>';
             $output .= '<script type="text/javascript">';
             $output .= "var ttDate=new LiveValidation('ttDate');";
             $output .= 'ttDate.add( Validate.Format, {pattern:';
@@ -605,6 +607,7 @@ function renderTT($guid, $connection2, $gibbonPersonID, $gibbonTTID, $title = ''
                 ->filterBy('status', 'Approved')
                 ->pageSize(0);
             $absenceList = $staffAbsenceGateway->queryAbsencesByPerson($criteria, $gibbonPersonID, false);
+            $canViewAbsences = isActionAccessible($guid, $connection2, '/modules/Staff/absences_view_byPerson.php');
 
             foreach ($absenceList as $absence) {
                 $summary = __('Absent');
@@ -612,7 +615,10 @@ function renderTT($guid, $connection2, $gibbonPersonID, $gibbonTTID, $title = ''
                     $summary .= ' - '.__('Coverage').': '.Format::name($absence['titleCoverage'], $absence['preferredNameCoverage'], $absence['surnameCoverage'], 'Staff', false, true);
                 }
                 $allDay = true;
-                $eventsPersonal[] = [$summary, 'All Day', strtotime($absence['date']), null, '', ''];
+                $url = $canViewAbsences
+                    ? $_SESSION[$guid]['absoluteURL'].'/index.php?q=/modules/Staff/absences_view_details.php&gibbonStaffAbsenceID='.$absence['gibbonStaffAbsenceID']
+                    : '';
+                $eventsPersonal[] = [$summary, 'All Day', strtotime($absence['date']), null, '', $url];
             }
 
             //Count up max number of all day events in a day
@@ -1096,7 +1102,9 @@ function renderTTDay($guid, $connection2, $gibbonTTID, $schoolOpen, $startDaySta
                         $height = '30px';
                         $top = (($maxAllDays * -31) - 8 + ($allDay * 30)).'px';
                         $output .= "<div class='ttPersonalCalendar' $title style='z-index: $zCount; position: absolute; top: $top; width: $width ; border: 1px solid #555; height: $height; margin: 0px; padding: 0px; opacity: $schoolCalendarAlpha'>";
-                        $output .= "<a target=_blank style='color: #fff' href='".$event[5]."'>".$label.'</a>';
+                        $output .= !empty($event[5])
+                            ? "<a target=_blank style='color: #fff' href='".$event[5]."'>".$label.'</a>'
+                            : $label;
                         $output .= '</div>';
                         ++$allDay;
                     } else {
@@ -1113,7 +1121,9 @@ function renderTTDay($guid, $connection2, $gibbonTTID, $schoolOpen, $startDaySta
                         }
                         $top = (ceil(($event[2] - strtotime(date('Y-m-d', $startDayStamp + (86400 * $count)).' '.$gridTimeStart)) / 60 )).'px';
                         $output .= "<div class='ttPersonalCalendar' $title style='z-index: $zCount; position: absolute; top: $top; width: $width ; border: 1px solid #555; height: $height; margin: 0px; padding: 0px; opacity: $schoolCalendarAlpha'>";
-                        $output .= "<a target=_blank style='color: #fff' href='".$event[5]."'>".$label.'</a>';
+                        $output .= !empty($event[5])
+                            ? "<a target=_blank style='color: #fff' href='".$event[5]."'>".$label.'</a>'
+                            : $label;
                         $output .= '</div>';
                     }
                     ++$zCount;
@@ -1478,7 +1488,9 @@ function renderTTDay($guid, $connection2, $gibbonTTID, $schoolOpen, $startDaySta
                             $height = '30px';
                             $top = (($maxAllDays * -31) - 8 + ($allDay * 30)).'px';
                             $output .= "<div class='ttPersonalCalendar' $title style='z-index: $zCount; position: absolute; top: $top; width: $width ; border: 1px solid #555; height: $height; margin: 0px; padding: 0px; opacity: $schoolCalendarAlpha'>";
-                            $output .= "<a target=_blank style='color: #fff' href='".$event[5]."'>".$label.'</a>';
+                            $output .= !empty($event[5])
+                                ? "<a target=_blank style='color: #fff' href='".$event[5]."'>".$label.'</a>'
+                                : $label;
                             $output .= '</div>';
                             ++$allDay;
                         } else {
@@ -1495,7 +1507,9 @@ function renderTTDay($guid, $connection2, $gibbonTTID, $schoolOpen, $startDaySta
                             }
                             $top = (ceil(($event[2] - strtotime(date('Y-m-d', $startDayStamp + (86400 * $count)).' '.$gridTimeStart)) / 60 )).'px';
                             $output .= "<div class='ttPersonalCalendar' $title style='z-index: $zCount; position: absolute; top: $top; width: $width ; border: 1px solid #555; height: $height; margin: 0px; padding: 0px; opacity: $schoolCalendarAlpha'>";
-                            $output .= "<a target=_blank style='color: #fff' href='".$event[5]."'>".$label.'</a>';
+                            $output .= !empty($event[5])
+                                ? "<a target=_blank style='color: #fff' href='".$event[5]."'>".$label.'</a>'
+                                : $label;
                             $output .= '</div>';
                         }
                         ++$zCount;
@@ -1523,7 +1537,7 @@ function renderTTDay($guid, $connection2, $gibbonTTID, $schoolOpen, $startDaySta
                         $title = "title='".substr($event[4], 0, 5).'-'.substr($event[5], 0, 5).' '.$event[6]."'";
                     } else {
                         $label = $event[1]."<br/><span style='font-weight: normal'>".substr($event[4], 0, 5).'-'.substr($event[5], 0, 5).'<br/>'.$event[6].'</span>';
-                        $title = "title='".$event[7]."'" ?? '';
+                        $title = "title='".($event[7] ?? '')."'";
                     }
                     $output .= "<div class='ttSpaceBookingCalendar' $title style='z-index: $zCount; position: absolute; top: $top; width: $width ; border: 1px solid #555; height: $height; margin: 0px; padding: 0px; opacity: $schoolCalendarAlpha'>";
                     $output .= $label;

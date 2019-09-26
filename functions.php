@@ -697,7 +697,7 @@ function getYearGroupsFromIDList($guid, $connection2, $ids, $vertical = false, $
         $years = explode(',', $ids);
         if (count($years) > 0 and $years[0] != '') {
             if (count($years) == $resultYears->rowCount()) {
-                $output = '<i>All</i>';
+                $output = '<i>'.__('All').'</i>';
             } else {
                 try {
                     $dataYears = array();
@@ -736,7 +736,7 @@ function getYearGroupsFromIDList($guid, $connection2, $ids, $vertical = false, $
                 }
             }
         } else {
-            $output = '<i>None</i>';
+            $output = '<i>'.__('None').'</i>';
         }
     } catch (PDOException $e) {
     }
@@ -1151,8 +1151,8 @@ function getAlertBar($guid, $connection2, $gibbonPersonID, $privacy = '', $divEx
         // Output alerts
         $classDefault = 'block align-middle text-center font-bold border-0 border-t-2 ';
         $classDefault .= $large
-            ? 'text-4xl w-10 h-10 pt-1 mr-2'
-            : 'text-xs w-4 pt-px mr-1';
+            ? 'text-4xl w-10 pt-1 mr-2 leading-none'
+            : 'text-xs w-4 pt-px mr-1 leading-none';
 
         foreach ($alerts as $alert) {
             $style = "color: #{$alert['highestColour']}; border-color: #{$alert['highestColour']}; background-color: #{$alert['highestColourBG']};";

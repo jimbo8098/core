@@ -369,6 +369,7 @@ class FormFactory implements FormFactoryInterface
             'es_ES' => 'Español',
             'fr_FR' => 'Français - France',
             'he_IL' => 'עברית - ישראל',
+            'hr_HR' => 'Hrvatski - Hrvatska',
             'it_IT' => 'Italiano - Italia',
             'pl_PL' => 'Język polski - Polska',
             'pt_BR' => 'Português - Brasil',
@@ -449,7 +450,8 @@ class FormFactory implements FormFactoryInterface
                 'AED د.إ' => 'United Arab Emirates Dirham (د.إ)',
                 'VND ₫‎' => 'Vietnamese Dong (₫‎)',
                 'XCD $' => 'Eastern Caribbean Dollars ($)',
-                'XOF FCFA' => 'West African Francs (FCFA)'
+                'XOF FCFA' => 'West African Francs (FCFA)',
+                'ZMW ZK' => 'Zambian Kwacha (ZMW)',
             ),
         );
 

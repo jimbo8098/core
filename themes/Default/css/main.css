@@ -73,7 +73,7 @@ a.active {
 
 a img {
     color: #ffffff;
-    border: none;
+    border-color: none;
 }
 
 /* TYPOGRAPHY */
@@ -568,6 +568,7 @@ div.ui-dialog button.ui-button {
 
 div#ui-datepicker-div {
     z-index: 1000 !important;
+    width: 220px;
 }
 
 /* From WP for tinymce display */
@@ -1114,6 +1115,14 @@ table.smallIntBorder td.noPadding {
     font-style: normal;
     font-weight: bold;
     font-size: 16px;
+}
+
+.blockInputs .LV_validation_message {
+    background-color: #edf7ff;
+}
+
+.blockInputs .LV_invalid_field {
+    border-color: #c53030 !important;
 }
 
 /* v16 NEW CLASSES */
