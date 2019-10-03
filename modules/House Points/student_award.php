@@ -1,9 +1,12 @@
 <?php
+include "./modules/".$_SESSION[$guid]["module"] . "/moduleFunctions.php";
+
 use Gibbon\Forms\Form;
 use Gibbon\Forms\DatabaseFormFactory;
 use Gibbon\Module\HousePoints\Domain\HousePointsGateway;
 use Gibbon\Tables\DataTable;
 use Gibbon\Services\Format;
+
 
 // manage house point categories
 if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.php")==FALSE) {
@@ -15,18 +18,19 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
 
     $page->breadcrumbs->add(__('Award student points'));
 
+    echo showResultAlert($_GET['result']);
     echo "<h3>Award house points to students</h3>";
 
-    $form = Form::create('awardForm', $gibbon->session->get('absoluteURL') . '/index.php','GET');
+    $form = Form::create('awardForm', $gibbon->session->get('absoluteURL') . '/index.php','get');
     $form->setFactory(DatabaseFormFactory::create($pdo));
-    $form->addHiddenValue('q',$gibbon->session->get('address'));
-    $form->
+    $form->addHiddenValue('q','/modules/House Points/award_save.php');
+    $form->addHiddenValue('return',$gibbon->session->get('address'));
     $form->addHiddenValue('teacherID', $this->teacherID);
 
     $row = $form->addRow();
-        $row->addLabel('studentId', __('Student'));
-        $row->addSelectStudent('studentId',$_GET['gibbonSchoolYearID'] ?? $gibbon->session->get('gibbonSchoolYearID'))
-            ->selected($_GET['studentId'] ?? '')
+        $row->addLabel('studentID', __('Student'));
+        $row->addSelectStudent('studentID',$_GET['gibbonSchoolYearID'] ?? $gibbon->session->get('gibbonSchoolYearID'))
+            ->selected($_GET['studentID'] ?? '')
             ->required()
             ->placeholder();
 
@@ -39,7 +43,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
 
     $row = $form->addRow();
         $row->addLabel('categoryName', __('Category'));
-        $row->addSelect('categoryId')
+        $row->addSelect('categoryID')
             ->fromDataSet($categories,'categoryID','categoryName')
             ->required()
             ->placeholder();
@@ -48,7 +52,6 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
     $row = $form->addRow();
         $row->addLabel('points', __('Points'));
         $row->addTextField('points')
-            //->disabled()
             ->placeholder(__('Points to add'));
 
     $row = $form->addRow();
@@ -56,7 +59,8 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
         $row->addTextArea('reason')->setRows(2)->required();
         
     $row = $form->addRow();
-        $row->addButton('Submit', 'awardSave()', 'submit')->addClass('right');
+        $row->addSubmit('Submit', 'submit')
+        ->addClass('right');
 
     echo $form->getOutput();
 

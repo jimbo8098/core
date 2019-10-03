@@ -17,23 +17,23 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_view.p
     $form->addHiddenValue('q',$gibbon->session->get('address'));
     $form->setFactory(DatabaseFormFactory::create($pdo));
     $row = $form->addRow();
-        $row->addLabel('studentId',__('Select Student'));
+        $row->addLabel('studentID',__('Select Student'));
         $row
-            ->addSelectStudent('studentId',$_GET['gibbonSchoolYearID'] ?? $gibbon->session->get('gibbonSchoolYearID'))
-            ->selected($_GET['studentId'] ?? '')
+            ->addSelectStudent('studentID',$_GET['gibbonSchoolYearID'] ?? $gibbon->session->get('gibbonSchoolYearID'))
+            ->selected($_GET['studentID'] ?? '')
             ->placeholder();
     $form->addRow()->addSubmit();
     echo $form->getOutput();
 
     $hpGateway = $container->get(HousePointsGateway::class);
     $criteria = $hpGateway->newQueryCriteria()
-        ->filterBy('studentId',$_GET['studentId'] ?? '')
+        ->filterBy('studentID',$_GET['studentID'] ?? '')
         ->fromPOST();
     $hp = $hpGateway->queryStudents($criteria,$_GET['gibbonSchoolYearID'] ?? $gibbon->session->get('gibbonSchoolYearID'));
 
     $table = DataTable::createPaginated('studentpoints',$criteria);
     $table->addHeaderAction('add',__('Add'))
-        ->addParam('studentId',$_GET['studentId'] ?? '')
+        ->addParam('studentID',$_GET['studentID'] ?? '')
         ->setURL('/modules/House Points/student_award.php');
     $table->addExpandableColumn('reason')
         ->format(function($row){

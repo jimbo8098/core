@@ -17,8 +17,9 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_award.ph
     echo "<p>&nbsp;</p>";
     echo "<h3>Award house points to house</h3>";
 
-    $form = Form::create('awardForm', '');
-    $form->addHiddenValue('submit', 'submit');
+    $form = Form::create('awardForm', $gibbon->session->get('absoluteURL') . '/index.php','get');
+    $form->addHiddenValue('q','/modules/House Points/award_save.php');
+    $form->addHiddenValue('mode','house');
     $form->addHiddenValue('teacherID', $gibbon->session->get('gibbonPersonID') ?? '');
 
     $sql = "SELECT gibbonHouse.gibbonHouseID AS value, gibbonHouse.name FROM gibbonHouse ORDER BY gibbonHouse.name";
@@ -42,7 +43,8 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_award.ph
 
     $row = $form->addRow();
         $row->addLabel('points', __('Points'));
-        $row->addTextField('points')->disabled()->placeholder(__('Select a category'));
+        $row->addTextField('points')
+        ->placeholder(__('Points to add'));
 
     $row = $form->addRow();
         $row->addLabel('reason', __('Reason'));
