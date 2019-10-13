@@ -1,4 +1,10 @@
 <?php
+
+use Gibbon\Module\HousePoints\Domain\HousePointsGateway;
+use Gibbon\Tables\DataTable;
+use Gibbon\Services\Format;
+use Gibbon\Forms\Form;
+
 // manage house point categories
 if (isActionAccessible($guid, $connection2,"/modules/House Points/category_manage.php")==FALSE) {
     //Acess denied
@@ -9,12 +15,26 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/category_manag
 
     $page->breadcrumbs->add(__('Categories'));
     
-    $modpath =  "./modules/".$_SESSION[$guid]["module"];
-    include $modpath."/moduleFunctions.php";
-    include $modpath."/category_function.php";
+    $hpGateway = $container->get(HousePointsGateway::Class);
+    $criteria = $hpGateway->newQueryCriteria()
+        ->sortBy('categoryOrder','DESC');
+    $categories = $hpGateway->queryCategories($criteria,false);
+    $table = DataTable::create('categories');
+    $table->addColumn('categoryName',__('Category'));
+    $actions = $table->addActionColumn('actions',__('Actions'));
+        $actions->format(function($row,$actions) {
+
+            $actions->addAction('edit',__('Edit'))
+                ->setURL('/modules/House Points/category.php')
+                ->addParam('categoryID',$row['categoryID'])
+                ->addParam('mode','edit');
+
+            $actions->addAction('delete',__('Delete'))
+                ->setURL('/modules/House Points/category.php')
+                ->addParam('categoryID',$row['categoryID'])
+                ->addParam('mode','delete');
+        });
     
-    $cat = new cat($guid, $connection2);
-    $cat->modpath = $modpath;
-    
-    $cat->mainform();
+    echo $table->render($categories);
+
 }
