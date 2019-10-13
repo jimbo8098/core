@@ -51,7 +51,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
     //TODO: Dynamic input in some way. AJAX? Two inputs instead of one? Not sure yet.
     $row = $form->addRow();
         $row->addLabel('points', __('Points'));
-        $row->addTextField('points')
+        $row->addNumber('points')
             ->placeholder(__('Points to add'));
 
     $row = $form->addRow();

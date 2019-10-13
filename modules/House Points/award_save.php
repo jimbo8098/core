@@ -26,11 +26,14 @@ switch($mode)
 
 if ($categoryID == 0) $status = "Please select a category";
 if (empty($reason)) $status = "Please provide a detailed reason";
+if ($points == 0) $status = "Please enter a valid point value";
 if ($highestAction != 'Award student points_unlimited') {
     if ($points<1 || $points>20) {
-        $msg .= "Please award between 1 and 20 points<br />"; 
+        $status = "Please award between 1 and 20 points<br />"; 
     }
 }
+//If an error occurs, don't continue
+if($status != "") header("Location: " .$gibbon->session->get('absoluteURL') . "?q=". $returnTo . "&result=0&status=" . $status);
 
 $data = array(
     'categoryID' => $categoryID,
