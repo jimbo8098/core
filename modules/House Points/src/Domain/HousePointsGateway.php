@@ -164,11 +164,11 @@ class HousePointsGateway extends QueryableGateway
             /*
                 The individual points table uses a non-zeropadded studentID whereas the gibbonPersonID is.
             */
-            'studentId' => function($query,$needle)
+            'studentID' => function($query,$needle)
             {
                 return $query
-                    ->where('s.studentID = :studentId')
-                    ->bindValue('studentId',$needle);
+                    ->where('s.studentID = :studentID')
+                    ->bindValue('studentID',$needle);
             },
             'rollGroupID' => function($query,$needle)
             {
