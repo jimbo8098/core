@@ -13,7 +13,7 @@ $points = $_GET['points'] ?? 0;
 $reason = $_GET['reason'] ?? "";
 $yearID = $_SESSION[$guid]['gibbonSchoolYearID'] ?? 0;
 $status = "";
-echo $mode;
+
 switch($mode)
 {
     case "house": if($houseID == 0) $status = "Please select a house"; break;
@@ -83,7 +83,7 @@ if($sql != "")
 
 if($returnTo != "")
 {
-    //header("Location: " .$gibbon->session->get('absoluteURL') . "?q=". $returnTo . "&result=0&status=" . $status);
+    header("Location: " .$gibbon->session->get('absoluteURL') . "?q=". $returnTo . "&result=0&status=" . $status);
 }
 else
 {
