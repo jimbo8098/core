@@ -14,6 +14,9 @@ $reason = $_GET['reason'] ?? "";
 $yearID = $_SESSION[$guid]['gibbonSchoolYearID'] ?? 0;
 $status = "";
 
+//Ensures the script always receives a teacher id, awardedBy in the table 
+//MUST be populated for the other parts to inner join properly
+if($teacherID == 0) { $status = "A Teacher ID wasn't provided"; } 
 switch($mode)
 {
     case "house": if($houseID == 0) $status = "Please select a house"; break;
