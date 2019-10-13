@@ -161,6 +161,9 @@ class HousePointsGateway extends QueryableGateway
             ->bindValue('schoolYearId',$schoolYearID);
 
         $criteria->addFilterRules([
+            /*
+                The individual points table uses a non-zeropadded studentID whereas the gibbonPersonID is.
+            */
             'studentId' => function($query,$needle)
             {
                 return $query
@@ -197,7 +200,6 @@ class HousePointsGateway extends QueryableGateway
                     ->bindValue('housePointsYearId',$needle);
             }
         ]);
-
         return $this->runQuery($query,$criteria);
     }
 

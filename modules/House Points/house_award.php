@@ -12,6 +12,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_award.ph
     
     $page->breadcrumbs->add(__('Award house points'));
 
+    showResultAlert($_GET['result']);
     global $pdo;
         
     echo "<p>&nbsp;</p>";
@@ -19,6 +20,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_award.ph
 
     $form = Form::create('awardForm', $gibbon->session->get('absoluteURL') . '/index.php','get');
     $form->addHiddenValue('q','/modules/House Points/award_save.php');
+    $form->addHiddenValue('return',$gibbon->session->get('address'));
     $form->addHiddenValue('mode','house');
     $form->addHiddenValue('teacherID', $gibbon->session->get('gibbonPersonID') ?? '');
 
@@ -51,7 +53,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_award.ph
         $row->addTextArea('reason')->setRows(2)->required();
         
     $row = $form->addRow();
-        $row->addButton('Submit', 'houseSave()', 'submit')->addClass('right');
+        $row->addSubmit('Submit','submit');
 
     echo $form->getOutput();
 

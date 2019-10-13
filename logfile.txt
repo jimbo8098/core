@@ -1,3 +1,0 @@
-[30-Sep-2019 23:43:38 Europe/London] Notice: Undefined index: result in /var/www/gibbon.local/modules/House Points/student_award.php on line 21
-[30-Sep-2019 23:45:14 Europe/London] Notice: Undefined index: result in /var/www/gibbon.local/modules/House Points/student_award.php on line 21
-[30-Sep-2019 23:46:09 Europe/London] Notice: Undefined index: result in /var/www/gibbon.local/modules/House Points/student_award.php on line 21

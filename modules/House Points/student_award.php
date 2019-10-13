@@ -7,7 +7,6 @@ use Gibbon\Module\HousePoints\Domain\HousePointsGateway;
 use Gibbon\Tables\DataTable;
 use Gibbon\Services\Format;
 
-
 // manage house point categories
 if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.php")==FALSE) {
     //Acess denied
@@ -25,7 +24,8 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
     $form->setFactory(DatabaseFormFactory::create($pdo));
     $form->addHiddenValue('q','/modules/House Points/award_save.php');
     $form->addHiddenValue('return',$gibbon->session->get('address'));
-    $form->addHiddenValue('teacherID', $this->teacherID);
+    $form->addHiddenValue('mode','student');
+    $form->addHiddenValue('teacherID', $gibbon->session->get('gibbonPersonID') ?? '');
 
     $row = $form->addRow();
         $row->addLabel('studentID', __('Student'));

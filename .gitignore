@@ -36,3 +36,5 @@ nbproject/
 # Var Folder
 var/*
 !var/.htaccess
+
+logfile.txt

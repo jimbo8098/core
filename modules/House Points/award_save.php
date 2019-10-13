@@ -1,28 +1,28 @@
 <?php
-include  "../../gibbon.php";
 
 $dbh = $connection2;
 $highestAction = getHighestGroupedAction($guid, '/modules/House Points/award.php', $dbh);
 
-$returnTo = $_GET['return'];
-$mode = $_GET['mode'];
-$houseID = $_POST['houseID'];
-$teacherID = $_GET['teacherID'];
-$studentID = $_GET['studentID'];
-$categoryID = $_GET['categoryID'];
-$points = $_GET['points'];
-$reason = $_GET['reason'];
-$yearID = $_SESSION[$guid]['gibbonSchoolYearID'];
-
+$returnTo = $_GET['return'] ?? "";
+$mode = $_GET['mode'] ?? "";
+$houseID = $_GET['houseID'] ?? 0;
+$teacherID = $_GET['teacherID'] ?? 0;
+$studentID = $_GET['studentID'] ?? 0;
+$categoryID = $_GET['categoryID'] ?? 0;
+$points = $_GET['points'] ?? 0;
+$reason = $_GET['reason'] ?? "";
+$yearID = $_SESSION[$guid]['gibbonSchoolYearID'] ?? 0;
+$status = "";
+echo $mode;
 switch($mode)
 {
-    case "house": if($houseID == 0) return "Please select a house";
-    case "student": if($studentID == 0) return "Please select a student;";
-    default: return "Please select an award mode";
+    case "house": if($houseID == 0) $status = "Please select a house"; break;
+    case "student": if($studentID == 0) $status = "Please select a student"; break;
+    default: $status = "Please select an award mode"; break;
 }
 
-if ($categoryID == 0) return "Please select a category";
-if (empty($reason)) return "Please provide a detailed reason";
+if ($categoryID == 0) $status = "Please select a category";
+if (empty($reason)) $status = "Please provide a detailed reason";
 if ($highestAction != 'Award student points_unlimited') {
     if ($points<1 || $points>20) {
         $msg .= "Please award between 1 and 20 points<br />"; 
@@ -30,20 +30,19 @@ if ($highestAction != 'Award student points_unlimited') {
 }
 
 $data = array(
-    'houseID' => $houseID,
     'categoryID' => $categoryID,
     'points' => $points,
     'reason' => $reason,
     'yearID' => $_SESSION[$guid]['gibbonSchoolYearID'],
     'awardedDate' => date('Y-m-d'),
-    'awardedBy' => $teacherID,
-    'studentID' => $studentID
+    'awardedBy' => $teacherID
 );
 
 $sql = "";
 switch($mode)
 {
     case "student":
+        $data['studentID'] = $studentID;
         $sql = "INSERT INTO hpPointStudent
             SET studentID = :studentID,
             categoryID = :categoryID,
@@ -55,41 +54,41 @@ switch($mode)
         break;
 
     case "house":
-        $sql = "INSERT INTO hpPointHouse(
-            houseID,
-            categoryID,
-            points,
-            reason,
-            yearID,
-            awardedDate,
-            awardedBy
-        )
-        VALUES (
-            :houseID,
-            :categoryID
-            :points,
-            :reason,
-            :yearID,
-            :awardedDate,
-            :awardedBy
-        );";
+        $data['houseID'] = $houseID;
+        $sql = "INSERT INTO hpPointHouse 
+            SET 
+                houseID = :houseID,
+                categoryID = :categoryID,
+                points = :points,
+                reason = :reason,
+                yearID = :yearID,
+                awardedDate = :awardedDate,
+                awardedBy = :awardedBy
+            ;";
         break;
 }
 
-$rs = $dbh->prepare($sql);
-$ok = $rs->execute($data);
-if ($ok) {
-    $msg = "Points successfully added";
-} else {
-    $msg = "Problem - contact system adminstrator";
+
+if($sql != "")
+{
+    $rs = $dbh->prepare($sql);
+    $ok = $rs->execute($data);
+    if ($ok) {
+        $status = "Points successfully added";
+    } else {
+        $status = "Problem - contact system adminstrator";
+    }
 }
 
 
-if($returnTo != null)
+if($returnTo != "")
 {
-    header("Location: " .$gibbon->session->get('absoluteURL') . "?q=". $returnTo) . "&result=0";
+    //header("Location: " .$gibbon->session->get('absoluteURL') . "?q=". $returnTo . "&result=0&status=" . $status);
 }
 else
 {
-    echo $msg;
+    return json_encode(array(
+        "status" => $status,
+        "result" => $ok ? "ok" : "fail"
+    ));
 }
