@@ -45,7 +45,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_award.ph
 
     $row = $form->addRow();
         $row->addLabel('points', __('Points'));
-        $row->addNMumber('points')
+        $row->addNumber('points')
         ->placeholder(__('Points to add'));
 
     $row = $form->addRow();
