@@ -54,6 +54,12 @@ class HousePointsGateway extends QueryableGateway
                     ->where('h.categoryType = :categoryType')
                     ->bindValue('categoryType',$needle);
                 
+            },
+            'categoryID' => function($query,$needle)
+            {
+                return $query
+                    ->where('h.categoryID = :categoryID')
+                    ->bindValue('categoryID',$needle);
             }
         ]);
 

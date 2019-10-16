@@ -76,7 +76,6 @@ function showDelete(HousePointsGateway $hpGateway,$absoluteURL)
 
 function showViewAll(HousePointsGateway $hpGateway,$absoluteURL)
 {
-    $catFunctions = $absoluteURL.'/modules/'.$_SESSION[$guid]['module']. '/category_functions.php';
     $criteria = $hpGateway->newQueryCriteria()
         ->sortBy('categoryOrder','DESC');
     $categories = $hpGateway->queryCategories($criteria,false);
@@ -86,17 +85,17 @@ function showViewAll(HousePointsGateway $hpGateway,$absoluteURL)
         ->addParam('q','/modules/House Points/category_manage.php');
     $table->addColumn('categoryName',__('Category'));
     $actions = $table->addActionColumn('actions',__('Actions'));
-        $actions->format(function($row,$actions) {
+        $actions->format(function($row,$actions){
 
             $actions->addAction('edit',__('Edit'))
-                ->setURL($catFunctions)
                 ->addParam('categoryID',$row['categoryID'])
-                ->addParam('mode','edit');
+                ->addParam('mode','edit')
+                ->setURL('/modules/House Points/category_manage.php');
 
             $actions->addAction('delete',__('Delete'))
-                ->setURL($catFunctions)
                 ->addParam('categoryID',$row['categoryID'])
-                ->addParam('mode','delete');
+                ->addParam('mode','delete')
+                ->setURL('/modules/House Points/category_functions.php');
         });
     
     return $table->render($categories);
@@ -104,28 +103,35 @@ function showViewAll(HousePointsGateway $hpGateway,$absoluteURL)
 
 function showAddEdit(HousePointsGateway $hpGateway, $categoryID, $mode,$absoluteURL)
 {
-    $form = Form::create('catform', $absoluteURL.'/index.php','POST');
-    $form->addHiddenValue('q','/modules/House Points/category_function.php');
-    $form->addHiddenValue('categoryID', $categoryID ?? 0);
-    $form->addHiddenValue('returnTo',$absoluteURL . '?q=/modules/House Points/category_manage.php');
-    $form->addHiddenValue('mode', 'add');    
+    $criteria = $hpGateway->newQueryCriteria()
+        ->filterBy('categoryID',$categoryID);
+    $categories = $hpGateway->queryCategories($criteria,false);
+    if($categories->count() > 1) throw new Exception("There are duplicate category IDs");
+    else
+    {
+        $category = $categories->toArray()[0];
+        $form = Form::create('catform', $absoluteURL.'/index.php?q=/modules/House Points/category_function.php','POST');
+        $form->addHiddenValue('categoryID', $categoryID ?? 0);
+        $form->addHiddenValue('returnTo',$absoluteURL . '?q=/modules/House Points/category_manage.php');
+        $form->addHiddenValue('mode', $mode);    
 
-    $row = $form->addRow();
-        $row->addLabel('categoryName', __('Category Name'));
-        $row->addTextField('categoryName')->required()->maxLength(45)->setValue($categoryName ?? '');
+        $row = $form->addRow();
+            $row->addLabel('categoryName', __('Category Name'));
+            $row->addTextField('categoryName')->required()->maxLength(45)->setValue($category['categoryName'] ?? '');
 
-    $row = $form->addRow();
-        $row->addLabel('categoryType', __('Type'));
-        $row->addSelect('categoryType')->fromArray(array('House', 'Student'))->selected($categoryType ?? '');
+        $row = $form->addRow();
+            $row->addLabel('categoryType', __('Type'));
+            $row->addSelect('categoryType')->fromArray(array('House', 'Student'))->selected($category['categoryType'] ?? '');
 
-    $row = $form->addRow();
-        $row->addLabel('categoryPresets', __('Presets'))
-            ->description(__('Add preset comma-separated increments as Name: PointValue. Leave blank for unlimited.'))
-            ->description(__(' eg: ThingOne: 1, ThingTwo: 5, ThingThree: 10'));
-        $row->addTextArea('categoryPresets')->setRows(2)->setValue($categoryPresets ?? '');
+        $row = $form->addRow();
+            $row->addLabel('categoryPresets', __('Presets'))
+                ->description(__('Add preset comma-separated increments as Name: PointValue. Leave blank for unlimited.'))
+                ->description(__(' eg: ThingOne: 1, ThingTwo: 5, ThingThree: 10'));
+            $row->addTextArea('categoryPresets')->setRows(2)->setValue($category['categoryPresets'] ?? '');
 
-    $row = $form->addRow();
-        $row->addSubmit(__('Save'));
+        $row = $form->addRow();
+            $row->addSubmit(__('Save'));
 
-    return $form->getOutput();
+        return $form->getOutput();
+    }
 }
