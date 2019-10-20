@@ -17,17 +17,17 @@ class HousePointsGateway extends QueryableGateway
      * 
      * @param QueryCriteria The criteria for the query
      * @param bool If true, outputs for use with fromArray in MultipleInputTrait
+     * @param bool If true, increments categoryOrder by 1 for nice 1 based display
      *
      * @return DataSet 
      */
-    public function queryCategories(QueryCriteria $criteria,$select = false)
+    public function queryCategories(QueryCriteria $criteria,$select,$isHumanReadable)
     {
         $this->searchableColumns = ['h.categoryName'];
         $query = $this
             ->newQuery()
             ->from('hpCategory as h')
             ->cols([
-                'h.categoryOrder as categoryOrder',
                 'h.categoryType as categoryType',
                 'h.categoryPresets as categoryPresets'
             ]);
@@ -44,6 +44,19 @@ class HousePointsGateway extends QueryableGateway
             $query->cols([
                 'h.categoryID as value',
                 'h.categoryName as name',
+            ]);
+        }
+
+        if($isHumanReadable)
+        {
+            $query->cols([
+                'h.categoryOrder + 1 as categoryOrder'
+            ]);
+        }
+        else
+        {
+            $query->cols([
+                'h.categoryOrder as categoryOrder'
             ]);
         }
         
@@ -64,6 +77,20 @@ class HousePointsGateway extends QueryableGateway
         ]);
 
         return $this->runQuery($query,$criteria);
+    }
+
+    public function queryUsedCategoryOrders($order)
+    {
+        $categoryOrderSelect = $this
+            ->newQuery()
+            ->from('hpCategory as c')
+            ->cols([
+                'c.categoryOrder as value',
+                'c.categoryOrder as name'
+            ]);
+        
+        $criteria = $this->newQueryCriteria()->sortBy('c.categoryOrder',$order);
+        return $this->runQuery($categoryOrderSelect,$criteria);
     }
 
     public function queryOverallPoints(QueryCriteria $criteria,$yearId)
