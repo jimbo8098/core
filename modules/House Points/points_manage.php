@@ -18,17 +18,6 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/points_manage.
     $modpath =  "./modules/".$_SESSION[$guid]["module"];
     include $modpath."/moduleFunctions.php";
     include $modpath."/manage_function.php";
-   
-    ?>
-    <script>
-        var modpath = '<?php echo $modpath ?>';
-    </script>
-    <?php
-    
-    $man = new man($guid, $connection2);
-    $man->modpath = $modpath;
-    
-    $man->mainform();
 
     $form = Form::create('student',$gibbon->session->get('absoluteURL') . '/index.php','GET');
     $form->setFactory(DatabaseFormFactory::create($pdo));

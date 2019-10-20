@@ -205,9 +205,12 @@ class HousePointsGateway extends QueryableGateway
             },
             'rollGroupID' => function($query,$needle)
             {
-                return $query
-                    ->where('rg.rollGroupID = :rollGroupID')
-                    ->bindValue('rollGroupID',$needle);
+                if($needle != '')
+                {
+                    return $query
+                        ->where('rg.gibbonRollGroupID = :rollGroupID')
+                        ->bindValue('rollGroupID',$needle);
+                }
             },
             'gibbonSchoolYearId' => function($query,$needle)
             {
@@ -233,6 +236,7 @@ class HousePointsGateway extends QueryableGateway
                     ->bindValue('housePointsYearId',$needle);
             }
         ]);
+
         return $this->runQuery($query,$criteria);
     }
 

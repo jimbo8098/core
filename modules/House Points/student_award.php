@@ -39,7 +39,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
 
     $hpGateway = $container->get(HousePointsGateway::Class);
     $criteria = $hpGateway->newQueryCriteria()->filterBy('categoryType','Student');
-    $categories = $hpGateway->queryCategories($criteria,false);
+    $categories = $hpGateway->queryCategories($criteria,false,false);
 
     $row = $form->addRow();
         $row->addLabel('categoryName', __('Category'));
