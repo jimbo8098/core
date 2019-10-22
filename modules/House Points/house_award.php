@@ -1,5 +1,9 @@
 <?php
 use Gibbon\Forms\Form;
+use Gibbon\Forms\DatabaseFormFactory;
+use Gibbon\Module\HousePoints\Domain\HousePointsGateway;
+use Gibbon\Tables\DataTable;
+use Gibbon\Services\Format;
 
 include __DIR__ . '/moduleFunctions.php';
 // manage house point categories
@@ -12,7 +16,10 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_award.ph
     
     $page->breadcrumbs->add(__('Award house points'));
 
-    showResultAlert($_GET['result']);
+    if(isset($_GET['result']))
+    {
+        showResultAlert($_GET['result']);
+    }
     global $pdo;
         
     echo "<p>&nbsp;</p>";
@@ -32,16 +39,16 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_award.ph
     $highestAction = getHighestGroupedAction($guid, '/modules/House Points/house_award.php', $connection2);
     $unlimitedPoints = ($highestAction == 'Award house points_unlimited');
 
-    $categories = array_reduce(readCategoryList($connection2, 'House')->fetchAll(), function($group, $item) use ($unlimitedPoints) { 
-        if (empty($item['categoryPresets']) && !$unlimitedPoints) return $group; 
-
-        $group[$item['categoryID']] = $item['categoryName'];
-        return $group;
-    }, array());
+    $hpGateway = $container->get(HousePointsGateway::Class);
+    $criteria = $hpGateway->newQueryCriteria()->filterBy('categoryType','House');
+    $categories = $hpGateway->queryCategories($criteria,true,false);
 
     $row = $form->addRow();
         $row->addLabel('categoryID', __('Category'));
-        $row->addSelect('categoryID')->fromArray($categories)->required()->placeholder();
+        $row->addSelect('categoryID')
+            ->fromDataSet($categories,'value','name')
+            ->required()
+            ->placeholder();
 
     $row = $form->addRow();
         $row->addLabel('points', __('Points'));
@@ -55,16 +62,5 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_award.ph
     $row = $form->addRow();
         $row->addSubmit('Submit','submit');
 
-    echo $form->getOutput();
-
-    echo "<div>&nbsp;</div>";
-    echo "<p id='msg' style='color:blue;'></p>";
-    echo "<script>
-        
-    $('#awardForm #categoryID').change(function(){
-        updateCategoryPoints();
-    });
-
-    </script>";
-        
+    echo $form->getOutput();        
 }

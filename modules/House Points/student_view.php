@@ -28,7 +28,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_view.p
     $hpGateway = $container->get(HousePointsGateway::class);
     $criteria = $hpGateway->newQueryCriteria()
         ->filterBy('studentID',$_GET['studentID'] ?? '');
-    $hp = $hpGateway->queryStudents($criteria,$_GET['gibbonSchoolYearID'] ?? $gibbon->session->get('gibbonSchoolYearID'));
+    $hp = $hpGateway->queryStudentPoints($criteria,$_GET['gibbonSchoolYearID'] ?? $gibbon->session->get('gibbonSchoolYearID'));
 
     $table = DataTable::createPaginated('studentpoints',$criteria);
     $table->addHeaderAction('add',__('Add'))

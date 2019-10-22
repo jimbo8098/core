@@ -17,7 +17,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
 
     $page->breadcrumbs->add(__('Award student points'));
 
-    echo showResultAlert($_GET['result']);
+    echo showResultAlert($_GET['result'] ?? null);
     echo "<h3>Award house points to students</h3>";
 
     $form = Form::create('awardForm', $gibbon->session->get('absoluteURL') . '/index.php','get');
@@ -39,20 +39,23 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
 
     $hpGateway = $container->get(HousePointsGateway::Class);
     $criteria = $hpGateway->newQueryCriteria()->filterBy('categoryType','Student');
-    $categories = $hpGateway->queryCategories($criteria,false,false);
-
+    $categories = $hpGateway->queryCategories($criteria,true);
+    $subCategories = $hpGateway->querySubcategories($criteria);
+        var_dump($subCategories->toArray());
     $row = $form->addRow();
-        $row->addLabel('categoryName', __('Category'));
-        $row->addSelect('categoryID')
-            ->fromDataSet($categories,'categoryID','categoryName')
-            ->required()
+        $row->addLabel('subCategoryID',__('Categories / Presets'));
+        $row->addSelect('subCategoryID')
+            ->fromDataset($subCategories,'subCategoryID','categoryAndSubCategoryNames')
             ->placeholder();
 
-    //TODO: Dynamic input in some way. AJAX? Two inputs instead of one? Not sure yet.
-    $row = $form->addRow();
-        $row->addLabel('points', __('Points'));
-        $row->addNumber('points')
-            ->placeholder(__('Points to add'));
+    if($unlimitedPoints)
+    {
+        $row = $form->addRow();
+            $row->addLabel('points', __('Points'))
+                ->description(__('You can add as many points as you like using this category'));
+            $row->addNumber('points')
+                ->placeholder(__('Points to add'));
+    }
 
     $row = $form->addRow();
         $row->addLabel('reason', __('Reason'));
@@ -63,8 +66,5 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
         ->addClass('right');
 
     echo $form->getOutput();
-
-    echo "<div>&nbsp;</div>";
-    echo "<p id='msg' style='color:blue;'></p>";
     
 }

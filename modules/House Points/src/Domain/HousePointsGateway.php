@@ -21,42 +21,36 @@ class HousePointsGateway extends QueryableGateway
      *
      * @return DataSet 
      */
-    public function queryCategories(QueryCriteria $criteria,$select,$isHumanReadable)
+    public function queryCategories(QueryCriteria $criteria,$isHumanReadable = false)
     {
-        $this->searchableColumns = ['h.categoryName'];
+        $this->searchableColumns = ['c.categoryName'];
         $query = $this
             ->newQuery()
-            ->from('hpCategory as h')
+            ->from('hpCategory as c')
+            ->join('LEFT','hpSubCategory as sc','c.categoryID = sc.categoryID')
+            ->groupBy([
+                'c.categoryID',
+                'c.categoryType',
+                'c.categoryName'
+            ])
             ->cols([
-                'h.categoryType as categoryType',
-                'h.categoryPresets as categoryPresets'
+                'c.categoryType as categoryType',
+                'c.categoryID as categoryID',
+                'c.categoryName as categoryName',
+                'IFNULL(GROUP_CONCAT(concat(sc.name,\': \',sc.value)),\'\') as concatenatedSubCategories'
             ]);
 
-        if($select == false)
-        {
-            $query->cols([
-                'h.categoryID as categoryID',
-                'h.categoryName as categoryName'
-            ]);
-        }
-        else
-        {
-            $query->cols([
-                'h.categoryID as value',
-                'h.categoryName as name',
-            ]);
-        }
 
         if($isHumanReadable)
         {
             $query->cols([
-                'h.categoryOrder + 1 as categoryOrder'
+                'c.categoryOrder + 1 as categoryOrder'
             ]);
         }
         else
         {
             $query->cols([
-                'h.categoryOrder as categoryOrder'
+                'c.categoryOrder as categoryOrder'
             ]);
         }
         
@@ -64,18 +58,64 @@ class HousePointsGateway extends QueryableGateway
             'categoryType' => function($query,$needle)
             {
                 return $query
-                    ->where('h.categoryType = :categoryType')
+                    ->where('c.categoryType = :categoryType')
                     ->bindValue('categoryType',$needle);
                 
             },
             'categoryID' => function($query,$needle)
             {
                 return $query
-                    ->where('h.categoryID = :categoryID')
+                    ->where('c.categoryID = :categoryID')
                     ->bindValue('categoryID',$needle);
             }
         ]);
 
+        return $this->runQuery($query,$criteria);
+    }
+
+    public function querySubCategories(QueryCriteria $criteria)
+    {
+        $query = $this
+            ->newQuery()
+            ->from('hpSubCategory as sc')
+            ->innerJoin('hpCategory as c','sc.categoryID = c.categoryID')
+            ->cols([
+                'sc.name as subCategoryName',
+                'sc.value as subCategoryValue',
+                'sc.subCategoryID as subCategoryID',
+                'sc.categoryID as categoryID',
+                'CONCAT(sc.name,\' (\',sc.value,\') \') as subCategoryCombinedName',
+                'CONCAT(c.categoryName,\' - \',sc.name,\' (\',sc.value,\') \') as categoryAndSubCategoryNames',
+                'c.categoryName as categoryName'
+            ]);
+            
+
+        $criteria->addFilterRules([
+            'categoryID' => function($query,$needle)
+            {
+                return $query
+                    ->where('sc.categoryID = :categoryID')
+                    ->bindValue('categoryID',$needle);
+            },
+            'subCategoryID'=> function($query,$needle)
+            {
+                return $query
+                    ->where('sc.subCategoryID = :subCategoryID')
+                    ->bindValue('subCategoryID',$needle);
+            },
+            'subCategoryName' => function($query,$needle)
+            {
+                return $query
+                    ->where('sc.subQueryName = :subQueryName')
+                    ->bindValue('subQueryName', $needle);
+            },
+            'categoryType' => function($query,$needle)
+            {
+                return $query
+                    ->where('c.categoryType = :categoryType')
+                    ->bindValue('categoryType',$needle);
+            }
+        ]);
         return $this->runQuery($query,$criteria);
     }
 
@@ -147,7 +187,7 @@ class HousePointsGateway extends QueryableGateway
         return $this->runQuery($query,$criteria);
     }
 
-    public function queryStudents(QueryCriteria $criteria, $schoolYearID)
+    public function queryStudentPoints(QueryCriteria $criteria, $schoolYearID)
     {
 
         $this->searchableColumns = [

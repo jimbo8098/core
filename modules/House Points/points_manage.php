@@ -32,8 +32,8 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/points_manage.
     $form->setFactory(DatabaseFormFactory::create($pdo));
     $form->addHiddenValue('q','/modules/House Points/house_view.php');
     $row = $form->addRow();
-        $row->addLabel('selectHouse',__('Select House'));
-        $row->addSelectHouse('selectHouse');
+        $row->addLabel('houseID',__('Select House'));
+        $row->addSelectHouse('houseID');
     $form->addRow()->addSubmit();
     echo $form->getOutput();
 }

@@ -9,7 +9,7 @@ use Gibbon\Forms\Prefab\DeleteForm;
 //include '../gibbon.php';
 
 $mode = $_GET['mode'] ?? '';
-$categoryID = $_GET['categoryID'] ?? '';
+$categoryID = $_GET['categoryID'] ?? 0;
 $returnTo = $_GET['returnTo'] ?? '';
 $absoluteURL = $_SESSION[$guid]['absoluteURL'];
 $statusText = $_GET['statusText'] ?? null;
@@ -86,11 +86,15 @@ function showViewAll(HousePointsGateway $hpGateway,$absoluteURL)
 {
     $criteria = $hpGateway->newQueryCriteria()
         ->sortBy('categoryOrder','ASC');
-    $categories = $hpGateway->queryCategories($criteria,false,true);
+    $categories = $hpGateway->queryCategories($criteria,true);
     $table = DataTable::create('categories');
     $table->addHeaderAction('add',__('Add'))
         ->addParam('mode','add')
         ->addParam('q','/modules/House Points/category_manage.php');
+    $table->addExpandableColumn('concatenatedSubCategories')
+        ->format(function($row){
+            return "<p><strong>Subcategories:</strong> " . $row['concatenatedSubCategories'] . "</p>";
+        });
     $table->addColumn('categoryName',__('Category'));
     $table->addColumn('categoryOrder',__('Category Order'));
     $table->addColumn('categoryType',__('Category Type'));
@@ -115,7 +119,7 @@ function showAddEdit(HousePointsGateway $hpGateway, $categoryID, $mode,$absolute
 {
     $criteria = $hpGateway->newQueryCriteria()
         ->filterBy('categoryID',$categoryID);
-    $categories = $hpGateway->queryCategories($criteria,false,true);
+    $categories = $hpGateway->queryCategories($criteria,false,true,false);
 
     //Get the used category ordinals. These are ordered
     $highestOrder = $hpGateway->queryUsedCategoryOrders('DESC')->toArray()[0]['value'];
@@ -126,11 +130,11 @@ function showAddEdit(HousePointsGateway $hpGateway, $categoryID, $mode,$absolute
         array_push($availableCategories,$existingOrdinal);
     }
     array_push($availableCategories,'Bottom');
-        
-    if($categories->count() > 1) throw new Exception("There are duplicate category IDs");
-    else
+
+    if(($categories->count() == 1 && $mode =='edit') || $mode == 'add')
     {
         $category = $categories->toArray()[0];
+        if($mode == "add") $category = []; //No placeholders to be used
         
         $form = Form::create('catform', $absoluteURL.'/index.php?q=/modules/House Points/category_function.php','POST');
         $form->addHiddenValue('categoryID', $categoryID ?? 0);
@@ -150,14 +154,22 @@ function showAddEdit(HousePointsGateway $hpGateway, $categoryID, $mode,$absolute
             $row->addSelect('categoryOrder')->fromArray($availableCategories);
 
         $row = $form->addRow();
-            $row->addLabel('categoryPresets', __('Presets'))
+            $row->addLabel('subCategories', __('Presets'))
                 ->description(__('Add preset comma-separated increments as Name: PointValue. Leave blank for unlimited.'))
                 ->description(__(' eg: ThingOne: 1, ThingTwo: 5, ThingThree: 10'));
-            $row->addTextArea('categoryPresets')->setRows(2)->setValue($category['categoryPresets'] ?? '');
+            $row->addTextArea('subCategories')->setRows(2)->setValue($category['concatenatedSubCategories'] ?? '');
 
         $row = $form->addRow();
             $row->addSubmit(__('Save'));
 
         return $form->getOutput();
+    }
+    else
+    {
+        switch($mode)
+        {
+            case "add": throw new Exception("Tried to add an existing category"); break;
+            case "edit": throw new Exception("Duplicate categories found"); break;
+        }
     }
 }

@@ -19,7 +19,6 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/class_view.php
     $modpath =  "./modules/".$_SESSION[$guid]["module"];
     $gibbonYearId = $gibbon->session->get('gibbonSchoolYearID');
     include $modpath."/moduleFunctions.php";
-    include $modpath."/classpoints_function.php";
    
     $form = Form::create('rollgroup',$gibbon->session->get('absoluteURL') . '/index.php?q=/modules/House Points/class_view.php','POST');
     
@@ -39,7 +38,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/class_view.php
         ->newQueryCriteria()
         ->filterBy('rollGroupID',$_POST['rollGroupID'] ?? '');
 
-    $hp = $hpGateway->queryStudents($criteria,$gibbonYearId);
+    $hp = $hpGateway->queryStudentPoints($criteria,$gibbonYearId);
 
     $table = DataTable::createPaginated('classpoints',$criteria);
     $table->addColumn('student','Name')
