@@ -27,11 +27,8 @@ if($subCategoryString != '')
                 'subCategoryValue'=> trim($exploded[1])
             ];
         }
-        else
-        {
-            throw new Exception("Failed to retrieve entered subcategories during text parsing");
-        }
     },explode(',',$subCategoryString));
+    $subCats = array_filter($subCats); //Remove null values from the array, these couldn't be parsed
 }
 
 function cleanupCategoryOrder($conn)
@@ -173,7 +170,6 @@ switch($mode)
                             //Must make space for the new ordinal, otherwise leave the others be
                             if(array_search($categoryOrder,$cats) != null)
                             {
-                                echo "Something exists in this slot, moving up to make space";
                                 //When the next category ordinal is one more than the new ordinal 
                                 $sql = "UPDATE hpCategory SET categoryOrder = categoryOrder + 1 WHERE categoryOrder >= :categoryOrder";
                                 try{
@@ -235,6 +231,7 @@ switch($mode)
     case "add":
         cleanupCategoryOrder($connection2);
         if($categoryType != "House" && $categoryType != "Student") $result = 2;
+        echo "CatType: " . $categoryType . "<br/>";
         $sql = "
             INSERT INTO hpCategory
             SET

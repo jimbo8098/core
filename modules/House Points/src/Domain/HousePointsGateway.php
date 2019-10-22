@@ -77,8 +77,8 @@ class HousePointsGateway extends QueryableGateway
     {
         $query = $this
             ->newQuery()
-            ->from('hpSubCategory as sc')
-            ->innerJoin('hpCategory as c','sc.categoryID = c.categoryID')
+            ->from('hpCategory as c')
+            ->innerJoin('hpSubCategory as sc','sc.categoryID = c.categoryID')
             ->cols([
                 'sc.name as subCategoryName',
                 'sc.value as subCategoryValue',
@@ -86,7 +86,8 @@ class HousePointsGateway extends QueryableGateway
                 'sc.categoryID as categoryID',
                 'CONCAT(sc.name,\' (\',sc.value,\') \') as subCategoryCombinedName',
                 'CONCAT(c.categoryName,\' - \',sc.name,\' (\',sc.value,\') \') as categoryAndSubCategoryNames',
-                'c.categoryName as categoryName'
+                'c.categoryName as categoryName',
+                'c.categoryType as categoryType'
             ]);
             
 
@@ -116,6 +117,7 @@ class HousePointsGateway extends QueryableGateway
                     ->bindValue('categoryType',$needle);
             }
         ]);
+
         return $this->runQuery($query,$criteria);
     }
 
@@ -213,8 +215,8 @@ class HousePointsGateway extends QueryableGateway
                 'rg.name as rollGroupName',
                 'h.gibbonHouseID as houseID',
                 'h.name as house',
-                's.categoryID as categoryID',
-                'c.categoryName as categoryName',
+                's.subCategoryID as categoryID',
+                'CONCAT(c.categoryName,\' - \',sc.name) as categoryName',
                 's.points as points',
                 's.reason as reason',
                 's.yearID as yearID',
@@ -229,7 +231,8 @@ class HousePointsGateway extends QueryableGateway
             ->innerJoin('gibbonHouse as h','h.gibbonHouseID = p_s.gibbonHouseID')
             ->innerJoin('gibbonStudentEnrolment as se','se.gibbonPersonID = s.studentID')
             ->innerJoin('gibbonRollGroup as rg','rg.gibbonRollGroupID = se.gibbonRollGroupID')
-            ->innerJoin('hpCategory as c','c.categoryID = s.categoryID')
+            ->innerJoin('hpSubCategory as sc','sc.subCategoryID = s.subCategoryID')
+            ->innerJoin('hpCategory as c','c.categoryID = sc.categoryID')
             ->where('se.gibbonSchoolYearID = :schoolYearId')
             ->bindValue('schoolYearId',$schoolYearID);
 

@@ -20,8 +20,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_view.p
         $row->addLabel('studentID',__('Select Student'));
         $row
             ->addSelectStudent('studentID',$_GET['gibbonSchoolYearID'] ?? $gibbon->session->get('gibbonSchoolYearID'))
-            ->selected($_GET['studentID'] ?? '')
-            ->placeholder();
+            ->selected($_GET['studentID'] ?? '');
     $form->addRow()->addSubmit();
     echo $form->getOutput();
 

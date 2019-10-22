@@ -8,7 +8,7 @@ $mode = $_GET['mode'] ?? "";
 $houseID = $_GET['houseID'] ?? 0;
 $teacherID = $_GET['teacherID'] ?? 0;
 $studentID = $_GET['studentID'] ?? 0;
-$categoryID = $_GET['categoryID'] ?? 0;
+$subCategoryID = $_GET['subCategoryID'] ?? 0;
 $points = $_GET['points'] ?? 0;
 $reason = $_GET['reason'] ?? "";
 $yearID = $_SESSION[$guid]['gibbonSchoolYearID'] ?? 0;
@@ -36,7 +36,7 @@ if ($highestAction != 'Award student points_unlimited') {
 if($status != "") header("Location: " .$gibbon->session->get('absoluteURL') . "?q=". $returnTo . "&result=0&status=" . $status);
 
 $data = array(
-    'categoryID' => $categoryID,
+    'subCategoryID' => $subCategoryID,
     'points' => $points,
     'reason' => $reason,
     'yearID' => $_SESSION[$guid]['gibbonSchoolYearID'],
@@ -50,13 +50,15 @@ switch($mode)
     case "student":
         $data['studentID'] = $studentID;
         $sql = "INSERT INTO hpPointStudent
-            SET studentID = :studentID,
-            categoryID = :categoryID,
-            points = :points,
-            reason = :reason,
-            yearID = :yearID,
-            awardedDate = :awardedDate,
-            awardedBy = :awardedBy";
+            SET 
+                studentID = :studentID,
+                subCategoryID = :subCategoryID,
+                points = :points,
+                reason = :reason,
+                yearID = :yearID,
+                awardedDate = :awardedDate,
+                awardedBy = :awardedBy
+            ;";
         break;
 
     case "house":
@@ -64,7 +66,7 @@ switch($mode)
         $sql = "INSERT INTO hpPointHouse 
             SET 
                 houseID = :houseID,
-                categoryID = :categoryID,
+                subCategoryID = :subCategoryID,
                 points = :points,
                 reason = :reason,
                 yearID = :yearID,

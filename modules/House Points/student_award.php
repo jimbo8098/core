@@ -42,8 +42,9 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
     $categories = $hpGateway->queryCategories($criteria,true);
     $subCategories = $hpGateway->querySubcategories($criteria);
         var_dump($subCategories->toArray());
+
     $row = $form->addRow();
-        $row->addLabel('subCategoryID',__('Categories / Presets'));
+        $row->addLabel('subCategoryID',__('Category / Subcategory'));
         $row->addSelect('subCategoryID')
             ->fromDataset($subCategories,'subCategoryID','categoryAndSubCategoryNames')
             ->placeholder();

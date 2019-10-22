@@ -47,6 +47,4 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/class_view.php
     $table->addColumn('house','House');
 
     echo $table->render($hp);
-
-
 }
