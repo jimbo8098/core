@@ -92,7 +92,6 @@ abstract class QueryableGateway extends Gateway
     protected function runQuery(SelectInterface $query, QueryCriteria $criteria)
     {
         $query = $this->applyCriteria($query, $criteria);
-        var_dump($query->getStatement());
         $result = $this->db()->select($query->getStatement(), $query->getBindValues());
 
         $foundRows = $this->db()->selectOne("SELECT FOUND_ROWS()");

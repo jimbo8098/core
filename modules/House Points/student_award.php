@@ -39,9 +39,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
 
     $hpGateway = $container->get(HousePointsGateway::Class);
     $criteria = $hpGateway->newQueryCriteria()->filterBy('categoryType','Student');
-    $categories = $hpGateway->queryCategories($criteria,true);
     $subCategories = $hpGateway->querySubcategories($criteria);
-        var_dump($subCategories->toArray());
 
     $row = $form->addRow();
         $row->addLabel('subCategoryID',__('Category / Subcategory'));
@@ -53,7 +51,7 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/student_award.
     {
         $row = $form->addRow();
             $row->addLabel('points', __('Points'))
-                ->description(__('You can add as many points as you like using this category'));
+                ->description(__('You can award as many points as you like. If left blank, the subcategory\'s preset value will be used'));
             $row->addNumber('points')
                 ->placeholder(__('Points to add'));
     }

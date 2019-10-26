@@ -86,15 +86,19 @@ function showViewAll(HousePointsGateway $hpGateway,$absoluteURL)
 {
     $criteria = $hpGateway->newQueryCriteria()
         ->sortBy('categoryOrder','ASC');
-    $categories = $hpGateway->queryCategories($criteria,true);
+    $categories = $hpGateway->queryGroupedSubCategories($criteria,true);
+    
     $table = DataTable::create('categories');
     $table->addHeaderAction('add',__('Add'))
         ->addParam('mode','add')
         ->addParam('q','/modules/House Points/category_manage.php');
+    /*
+        TODO: Something isn't right here, doesn't seem to work
     $table->addExpandableColumn('concatenatedSubCategories')
         ->format(function($row){
-            return "<p><strong>Subcategories:</strong> " . $row['concatenatedSubCategories'] . "</p>";
+            return "<p><strong>Subcategories:</strong> " . $row['concatenatedSubCategory'] . "</p>";
         });
+    */
     $table->addColumn('categoryName',__('Category'));
     $table->addColumn('categoryOrder',__('Category Order'));
     $table->addColumn('categoryType',__('Category Type'));
@@ -119,8 +123,8 @@ function showAddEdit(HousePointsGateway $hpGateway, $categoryID, $mode,$absolute
 {
     $criteria = $hpGateway->newQueryCriteria()
         ->filterBy('categoryID',$categoryID);
-    $categories = $hpGateway->queryCategories($criteria,false,true,false);
-
+    $categories = $hpGateway->queryGroupedSubCategories($criteria,true);
+    
     //Get the used category ordinals. These are ordered
     $highestOrder = $hpGateway->queryUsedCategoryOrders('DESC')->toArray()[0]['value'];
     $availableCategories = [];
@@ -157,7 +161,7 @@ function showAddEdit(HousePointsGateway $hpGateway, $categoryID, $mode,$absolute
             $row->addLabel('subCategories', __('Presets'))
                 ->description(__('Add preset comma-separated increments as Name: PointValue. Leave blank for unlimited.'))
                 ->description(__(' eg: ThingOne: 1, ThingTwo: 5, ThingThree: 10'));
-            $row->addTextArea('subCategories')->setRows(2)->setValue($category['concatenatedSubCategories'] ?? '');
+            $row->addTextArea('subCategories')->setRows(2)->setValue($category['concatenatedSubCategory'] ?? '');
 
         $row = $form->addRow();
             $row->addSubmit(__('Save'));

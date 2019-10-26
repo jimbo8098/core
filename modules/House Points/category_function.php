@@ -256,11 +256,7 @@ switch($mode)
         {
             if($result == 0)
             {
-                $sql = "SELECT categoryID FROM hpCategory WHERE categoryID = :lastID";
-                $stmnt = $connection2->prepare($sql);
-                $results = $stmnt->execute([
-                    'lastID' => $connection2->lastInsertId()
-                ]);
+                $categoryID = $connection2->lastInsertId(); //Get last added category ID
                 mergeSubCategories($connection2,$categoryID,$subCats);
             }
         }

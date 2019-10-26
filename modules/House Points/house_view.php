@@ -28,11 +28,13 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_view.php
         $table->addHeaderAction('add',__('Add'))
             ->addParam('studentID',$_GET['studentID'] ?? '')
             ->setURL('/modules/House Points/student_award.php');
+        /*
+            TODO: Something not right here
         $table->addExpandableColumn('reason')
             ->format(function($row){
                 return "<p><strong>Reason:</strong> " . nl2brr($row['reason']) . "</p>";
             });
-
+        */
         $table->addColumn('student',__('Student'))->format(Format::using('name',[
                 '',
                 'firstname',

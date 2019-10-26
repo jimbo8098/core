@@ -12,32 +12,19 @@ class HousePointsGateway extends QueryableGateway
     private $searchableColumns = [];
     private static $tableName = 'hpCategory';
 
-    /**
-     * Get a list of categories
-     * 
-     * @param QueryCriteria The criteria for the query
-     * @param bool If true, outputs for use with fromArray in MultipleInputTrait
-     * @param bool If true, increments categoryOrder by 1 for nice 1 based display
-     *
-     * @return DataSet 
-     */
-    public function queryCategories(QueryCriteria $criteria,$isHumanReadable = false)
+    private function LeftJoinedSubCatQuery($isHumanReadable)
     {
         $this->searchableColumns = ['c.categoryName'];
         $query = $this
             ->newQuery()
             ->from('hpCategory as c')
             ->join('LEFT','hpSubCategory as sc','c.categoryID = sc.categoryID')
-            ->groupBy([
-                'c.categoryID',
-                'c.categoryType',
-                'c.categoryName'
-            ])
             ->cols([
                 'c.categoryType as categoryType',
                 'c.categoryID as categoryID',
                 'c.categoryName as categoryName',
-                'IFNULL(GROUP_CONCAT(concat(sc.name,\': \',sc.value)),\'\') as concatenatedSubCategories'
+                'IFNULL(GROUP_CONCAT(concat(sc.name,\': \',sc.value)),\'\') as concatenatedSubCategory'
+
             ]);
 
 
@@ -53,7 +40,11 @@ class HousePointsGateway extends QueryableGateway
                 'c.categoryOrder as categoryOrder'
             ]);
         }
-        
+        return $query;
+    }
+
+    private function LeftJoinedSubCatCriteria(QueryCriteria $criteria)
+    {
         $criteria->addFilterRules([
             'categoryType' => function($query,$needle)
             {
@@ -69,7 +60,31 @@ class HousePointsGateway extends QueryableGateway
                     ->bindValue('categoryID',$needle);
             }
         ]);
+        return $criteria;
+    }
 
+    public function queryGroupedSubCategories(QueryCriteria $criteria,$isHumanReadable = false)
+    {
+        $query = $this->LeftJoinedSubCatQuery($isHumanReadable)
+            ->groupBy([
+                'c.categoryID',
+                'c.categoryType',
+                'c.categoryName'
+            ]);
+
+        $criteria = $this->LeftJoinedSubCatCriteria($criteria);
+
+        return $this->runQuery($query,$criteria);
+    }
+
+    public function queryLeftJoinedSubCategories(QueryCriteria $criteria)
+    {
+        $query = $this->LeftJoinedSubCatQuery(false)->cols([
+            'sc.value as subCategoryValue',
+            'sc.subCategoryID as subCategoryID',
+            'sc.name as subCategoryName'
+        ]);
+        $criteria = $this->LeftJoinedSubCatCriteria($criteria);
         return $this->runQuery($query,$criteria);
     }
 

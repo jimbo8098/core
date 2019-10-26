@@ -45,19 +45,35 @@ if (isActionAccessible($guid, $connection2,"/modules/House Points/house_award.ph
 
     $hpGateway = $container->get(HousePointsGateway::Class);
     $criteria = $hpGateway->newQueryCriteria()->filterBy('categoryType','House');
-    $categories = $hpGateway->queryCategories($criteria,true);
+    $categoriesArr = $hpGateway->queryLeftJoinedSubCategories($criteria)->toArray();
+    
+    $catsToShow = [];
+    foreach($categoriesArr as $cat)
+    {
+        if($unlimitedPoints)
+        {
+            if($cat['subCategoryID'] != null)
+            {
+                $catsToShow[$cat['subCategoryID']] = $cat['categoryName'] . " - " . $cat['subCategoryName'] . " (" . $cat['subCategoryValue'] . ")";
+            }
+        }
+    }
 
     $row = $form->addRow();
-        $row->addLabel('categoryID', __('Category'));
-        $row->addSelect('categoryID')
-            ->fromDataSet($categories,'value','name')
+        $row->addLabel('subCategoryID', __('Category'));
+        $row->addSelect('subCategoryID')
+            ->fromArray($catsToShow)
             ->required()
             ->placeholder();
 
-    $row = $form->addRow();
-        $row->addLabel('points', __('Points'));
-        $row->addNumber('points')
-        ->placeholder(__('Points to add'));
+    if($unlimitedPoints)
+    {
+        $row = $form->addRow();
+            $row->addLabel('points', __('Points'))
+                ->description('You may enter as many points as you wish. If left empty, the default subcategory value will be awarded.');
+            $row->addNumber('points')
+            ->placeholder(__('Points to add'));
+    }
 
     $row = $form->addRow();
         $row->addLabel('reason', __('Reason'));
