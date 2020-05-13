@@ -15,7 +15,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
+
+use Gibbon\Domain\CrowdAssessment\CrowdAssessmentGateway;
+use Gibbon\Tables\DataTable;
+use Gibbon\Services\Format;
 
 //Module includes
 require_once __DIR__ . '/moduleFunctions.php';
@@ -40,6 +44,12 @@ if (isActionAccessible($guid, $connection2, '/modules/Crowd Assessment/crowdAsse
     echo '<p>';
     echo __('The list below shows all lessons in which there is work that you can crowd assess.');
     echo '</p>';
+
+    $gateway = $container->get(CrowdAssessmentGateway::class);
+    $criteria = $gateway->newQueryCriteria(true)
+                        ->filterBy('gibbonPersonID',$session->get('gibbonPersonID'))
+                        ->filterBy('gibbonSchoolYearID',$session->get('gibbonSchoolYearID'))
+                        ->fromPOST();
 
     if ($result->rowCount() < 1) {
         echo "<div class='error'>";
