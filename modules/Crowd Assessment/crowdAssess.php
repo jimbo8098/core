@@ -40,16 +40,20 @@ if (isActionAccessible($guid, $connection2, '/modules/Crowd Assessment/crowdAsse
     } catch (PDOException $e) {
         echo "<div class='error'>".$e->getMessage().'</div>';
     }
-
-    echo '<p>';
-    echo __('The list below shows all lessons in which there is work that you can crowd assess.');
-    echo '</p>';
-
+    
     $gateway = $container->get(CrowdAssessmentGateway::class);
     $criteria = $gateway->newQueryCriteria(true)
-                        ->filterBy('gibbonPersonID',$session->get('gibbonPersonID'))
-                        ->filterBy('gibbonSchoolYearID',$session->get('gibbonSchoolYearID'))
+                        ->filterBy('gibbonPersonID',$gibbon->session->get('gibbonPersonID'))
+                        ->filterBy('gibbonSchoolYearID',$gibbon->session->get('gibbonSchoolYearID'))
+//                        ->filterBy('gibbonFamilyID',
                         ->fromPOST();
+    $lessons = $gateway->queryCrowdAssessedLessons($criteria,['staff','students','parents','other']);
+    $table = DataTable::createPaginated('lessons',$criteria);
+    $table->setDescription(__('The list below shows all lessons in which there is work that you can crowd assess.'));
+    $table->addColumn('gibbonCourseNameShort',__('Class'));
+    $table->addColumn('gibbonCourseClassNameShort',__('Lesson (Unit)'));
+    $table->addColumn('date'.__('Date'));
+    echo $table->render($lessons);
 
     if ($result->rowCount() < 1) {
         echo "<div class='error'>";

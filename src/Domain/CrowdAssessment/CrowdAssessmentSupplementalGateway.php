@@ -13,7 +13,7 @@ class CrowdAssessmentSupplementalGateway extends QueryableGateway
   private static $tableName = '';
   private static $primaryKey = '';
   private static $searchableColumns = [];
-  private static $defaultCols = [
+  private $defaultCols = [
     'gibbonPlannerEntry.homeworkDueDateTime',
     'gibbonPlannerEntry.gibbonPlannerEntryID',
     'gibbonPlannerEntry.gibbonUnitID',
@@ -35,7 +35,8 @@ class CrowdAssessmentSupplementalGateway extends QueryableGateway
     'gibbonPlannerEntry.homeworkCrowdAssessClassmatesParentsRead',
     'gibbonPlannerEntry.homeworkCrowdAssessOtherParentsRead'
   ];
-  private static $defaultCriteria = [
+
+  private $defaultCriteria = [
     'gibbonPersonID' => function($query,$personID)
     {
       return $query
@@ -60,21 +61,15 @@ class CrowdAssessmentSupplementalGateway extends QueryableGateway
       ->where('gibbonPlannerEntry.homeworkSubmissionDateOpen <= CURRENT_DATE()')
       ->where("gibbonPlannerEntry.gibbonCrowdAssess = 'Y'")
       ->where('ADDTIME(gibbonPlannerEntry.date,INTERVAL 35 DAY) >= CURRENT_TIMESTAMP()')
-      ->cols($defaultCols);
+      ->cols($this->defaultCols);
   }
 
 
   public function queryStaff(QueryCriteria $criteria)
   {
-    $query = $this
+    return $this
       ->defaultQuery()
       ->where("gibbonPlannerEntry.homeworkCrowdAssessOtherTeachersRead = 'Y'");
-
-    $criteria->addFilterRules($defaultCriteria);
-    return [
-      'query' => $query,
-      'criteria' => $criteria
-    ];
   }
 
   public function queryStudent(QueryCriteria $criteria)
