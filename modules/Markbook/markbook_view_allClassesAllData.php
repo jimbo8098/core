@@ -22,6 +22,7 @@ use Gibbon\Domain\Planner\PlannerEntryGateway;
 use Gibbon\Domain\Markbook\MarkbookColumnGateway;
 use Gibbon\Module\Markbook\MarkbookView;
 use Gibbon\Services\Format;
+use Gibbon\Tables\DataTable;
 
 // Lock the file so other scripts cannot call it
 if (MARKBOOK_VIEW_LOCK !== sha1( $highestAction . $_SESSION[$guid]['gibbonPersonID'] ) . date('zWy') ) return;
@@ -198,10 +199,26 @@ require_once __DIR__ . '/src/MarkbookColumn.php';
             $markbook->cacheExternalAssessments( $courseName, $gibbonYearGroupIDList );
         }
 
-        echo '<h3>';
-        echo __('Results');
-        echo '</h3>';
+        //Prepare the descriptor message prior to display
+        $descMessage = "";
+        if(!empty($teacherList))
+        {
+          //TODO: Format::bold?
+          $descMessage .= "<b>".__("Class taught by").implode(', ',$teacherList)."</b>. ";
+        }
+        $descMessage .= __("To see more detail on an item (such as a comment or a grade), hover your mouse over it. To see more columns, use the \"Newer\" and \"Older\" links.");
+        if($markbook->hasExternalAssessments() == true)
+        {
+          $descMessage .= __("The baseline column ios populated based on student performance in external assessments and can be used as a reference point for the grades in the markbook.");
+        }
 
+        $table = DataTable::create('markbook');
+        $table->setTitle('Results');
+        $table->setDescription($descMessage);
+
+
+        echo $table->render([]);
+        
         // Print table header info
         echo '<p>';
             if (!empty($teacherList)) {

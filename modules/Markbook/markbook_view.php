@@ -46,6 +46,7 @@ if (isActionAccessible($guid, $connection2, '/modules/Markbook/markbook_view.php
 
         //VIEW ACCESS TO ALL MARKBOOK DATA
         if ($highestAction == 'View Markbook_allClassesAllData' || $highestAction == 'View Markbook_myClasses') {
+          echo "HERE";
             require __DIR__ . '/markbook_view_allClassesAllData.php';
         }
         //VIEW ACCESS TO MY OWN MARKBOOK DATA
