@@ -98,6 +98,30 @@ class INGateway extends QueryableGateway
         return $this->runQuery($query, $criteria);
     }
 
+    public function queryINDescriptorStatus(QueryCriteria $criteria)
+    {
+      $query = $this
+        ->newQuery()
+        ->distinct()
+        ->from('gibbonINPersonDescriptor')
+        ->join('right','gibbonINDescriptor','gibbonINPersonDescriptor.gibbonINDescriptorID = gibbonINDescriptor.gibbonINDescriptorID')
+        ->join('right','gibbonAlertLevel','gibbonINPersonDescriptor.gibbonAlertLevelID = gibbonAlertLevel.gibbonAlertLevelID')
+        ->cols([
+          'gibbonINDescriptor.name as descriptorName',
+          'gibbonAlertLevel.name as alertName'
+        ]);
+
+      $criteria->addFilterRules([
+        'gibbonPersonID' => function($query,$gibbonPersonID)
+        {
+          return $query
+            ->where('gibbonINPersonDescriptor.gibbonPersonID = :gibbonPersonID')
+            ->bindValue('gibbonPersonID',$gibbonPersonID);
+        }
+      ]);
+      return $this->runQuery($query,$criteria);
+    }
+
     public function queryINCountsBySchoolYear(QueryCriteria $criteria, $gibbonSchoolYearID, $gibbonYearGroupID = '')
     {
         $query = $this

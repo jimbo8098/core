@@ -17,9 +17,23 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+use Gibbon\Domain\IndividualNeeds\INGateway;
+use Gibbon\Tables\DataTable;
+use Gibbon\Services\Format;
+
 //$mode can be blank or "disabled". $archive is a serialized array of values previously archived
 function printINStatusTable($connection2, $guid, $gibbonPersonID, $mode = '', $archive = '')
 {
+  global $container;
+  $gateway = $container->get(INGateway::class);
+  $criteria = $gateway->newQueryCriteria()
+                      ->fromPOST();
+  $indescriptors = $gateway->queryINDescriptorStatus($criteria);
+  var_dump($indescriptors);
+  $table = DataTable::create('indescriptors');
+  $table->addColumn('descriptorName',__('Descriptor'));
+  $table->addColumn('alertName',__('Low'));
+  return $table->render($indescriptors);
     $output = false;
 
     try {
