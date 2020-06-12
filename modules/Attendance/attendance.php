@@ -93,9 +93,32 @@ if (isset($_SESSION[$guid]["username"])) {
                     $row['groupName']
                 );
             });
+        $dailyAttendanceTable->addAvailabilityColumn('availability',__('Recent History (New)'))
+                             ->setClass('historyCalendarMini rounded-sm overflow-hidden')
+                             ->format(function($row)
+                             {
+                               echo "test";
+                             });
         $dailyAttendanceTable->addColumn('recent-history', __('Recent History'))
             ->width('40%')
             ->format(function ($row) use ($takeAttendanceURL, $rowID, $session) {
+              echo "<br/>";
+              echo "<table class='historyCalendarMini rounded-sm overflow-hidden' cellspacing='0'>";
+              echo "<tr>";
+              for($i = 0; $i < (sizeof($row['recentHistory']) >= 10 ? 10 : sizeof($row['recentHistory'])); $i++)
+              {
+               $thisDay = $row['recentHistory'][$i]; 
+                echo "${i}: ";
+               var_dump($thisDay);
+               echo "<br/>";
+               echo Format::availabilitySegment(
+                 Format::dateReadable($thisDay['currentDate'], '%d'),
+                 Format::dateReadable($thisDay['currentDate'], '%b'),
+                 "highlightNoData");
+                echo "<br/><br/>";
+              }
+              echo "</tr></table>";
+                echo "<br/><br/>";
                 $dayTable = "<table class='historyCalendarMini rounded-sm overflow-hidden' cellspacing='0'>";
 
                 $l = sizeof($row['recentHistory']);
@@ -353,6 +376,8 @@ if (isset($_SESSION[$guid]["username"])) {
 
             $attendanceByCourseClass = [];
             while ($row = $result->fetch()) {
+              var_dump($row);
+              echo "<br/><br/>";
                 // Skip classes with no students
                 if ($row['studentCount'] <= 0) {
                     continue;
@@ -380,6 +405,8 @@ if (isset($_SESSION[$guid]["username"])) {
                 }
 
                 $log = $resultLog->fetch();
+                var_dump($log);
+                echo "<br/><br/>";
 
                 // general row variables
                 $row['currentDate'] = Format::date($currentDate);

@@ -26,6 +26,7 @@ use Gibbon\Tables\Action;
 use Gibbon\Tables\Columns\Column;
 use Gibbon\Tables\Columns\ActionColumn;
 use Gibbon\Tables\Columns\CheckboxColumn;
+use Gibbon\Tables\Columns\AvailabilityColumn;
 use Gibbon\Tables\Columns\ExpandableColumn;
 use Gibbon\Tables\Columns\DraggableColumn;
 use Gibbon\Tables\Renderer\RendererInterface;
@@ -282,6 +283,12 @@ class DataTable implements OutputableInterface
         $this->columns[$id] = new DraggableColumn($id, $ajaxURL, $data, $this);
 
         return $this->columns[$id];
+    }
+
+    public function addAvailabilityColumn($id, $name)
+    {
+      $this->columns[$id] = new AvailabilityColumn($id,$name);
+      return $this->columns[$id];
     }
 
     /**

@@ -259,6 +259,13 @@ class Format
             : $time;
     }
 
+    public static function availabilitySegment(string $upperRow, string $lowerRow, string $class)
+    {
+      $content = "<div class='day text-xs'>${upperRow}</div>";
+      $content .= "<div class='month text-xxs mt-px'>${lowerRow}</div>";
+      return "<td class=${class} style=padding: 12px !important;>${content}</td>";
+    }
+
     /**
      * Converts a YYYY-MM-DD date to a Unix timestamp.
      *
