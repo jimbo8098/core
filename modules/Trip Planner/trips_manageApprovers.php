@@ -19,6 +19,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 include "./modules/Trip Planner/moduleFunctions.php";
 
+use Gibbon\Tables\DataTable;
+use Gibbon\Services\Format;
+use Gibbon\Module\TripPlanner\Domain\TripGateway;
+
 if (!isActionAccessible($guid, $connection2, '/modules/Trip Planner/trips_manageApprovers.php')) {
     //Acess denied
     print "<div class='error'>";
@@ -27,13 +31,15 @@ if (!isActionAccessible($guid, $connection2, '/modules/Trip Planner/trips_manage
 } else {
     $highestAction = getHighestGroupedAction($guid, '/modules/Trip Planner/trips_manageApprovers.php', $connection2);
     if ($highestAction != false) {
-        print "<div class='trail'>";
-            print "<div class='trailHead'><a href='" . $_SESSION[$guid]["absoluteURL"] . "'>" . _("Home") . "</a> > <a href='" . $_SESSION[$guid]["absoluteURL"] . "/index.php?q=/modules/" . getModuleName($_GET["q"]) . "/" . getModuleEntry($_GET["q"], $connection2, $guid) . "'>" . _(getModuleName($_GET["q"])) . "</a> > </div><div class='trailEnd'>" . _('Manage Approvers') . "</div>";
-        print "</div>";
+        $page->breadcrumbs->add(__('Manage Approvers'));
 
         if (isset($_GET['return'])) {
             returnProcess($guid, $_GET['return'], null, null);
         }
+
+        $tripGateway = $container->get(TripGateway::class);
+        $criteria = $tripGateway->newQueryCriteria();
+        $table = DataTable::createPaginated('approvers',$criteria);
 
         print "<h3>";
             print "Approvers";
